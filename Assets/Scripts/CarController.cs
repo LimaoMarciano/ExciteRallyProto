@@ -42,6 +42,11 @@ public class CarController : MonoBehaviour {
 		accInput = Input.GetAxis (accelerator);
 		brakesInput = Input.GetAxis (brakes);
 
+		float vert = -Input.GetAxis (vertical);
+		float horz = Input.GetAxis (horizontal);
+
+		car.targetDirection = new Vector3 (vert, 0, horz);
+
 		car.targetAlignment = Input.GetAxis (vertical);
 
 		car.accInput = accInput;

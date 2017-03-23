@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Car : MonoBehaviour {
 
+	public bool isAdvancedControl = false;
+
 	public Transform centerOfMass;
 	public WheelCollider FRWheel;
 	public WheelCollider FLWheel;
@@ -19,20 +21,24 @@ public class Car : MonoBehaviour {
 
 	public float targetAlignment = 0;
 
+	public Vector3 targetDirection;
+
 	private bool isReversing = false;
 
 	void Start () {
 		rBody = GetComponent<Rigidbody> ();
 
-		FRWheel.motorTorque = 0.01f;
-		FLWheel.motorTorque = 0.01f;
-		RRWheel.motorTorque = 0.01f;
-		RLWheel.motorTorque = 0.01f;
+//		FRWheel.motorTorque = 0.01f;
+//		FLWheel.motorTorque = 0.01f;
+//		RRWheel.motorTorque = 0.01f;
+//		RLWheel.motorTorque = 0.01f;
 
 		rBody.centerOfMass = centerOfMass.localPosition;
 	}
 
 	void FixedUpdate () {
+//		RRWheel.motorTorque = accInput * engineTorque;
+//		RLWheel.motorTorque = accInput * engineTorque;
 		FRWheel.motorTorque = accInput * engineTorque;
 		FLWheel.motorTorque = accInput * engineTorque;
 
@@ -45,6 +51,8 @@ public class Car : MonoBehaviour {
 		}
 
 		if (isReversing) {
+//			RRWheel.motorTorque = -brakeInput * engineTorque;
+//			RLWheel.motorTorque = -brakeInput * engineTorque;
 			FRWheel.motorTorque = -brakeInput * engineTorque;
 			FLWheel.motorTorque = -brakeInput * engineTorque;
 		} else {
@@ -54,8 +62,17 @@ public class Car : MonoBehaviour {
 			RLWheel.brakeTorque = brakeInput * brakeTorque;
 		}
 
-		Vector3 target = new Vector3 (-targetAlignment * 0.5f, 0, 1);
-		float roadAlignment = 1 - Vector3.Dot (transform.forward, target.normalized);
+		Vector3 target;
+
+		if (isAdvancedControl) {
+			if (targetDirection.x == 0 && targetDirection.z == 0) {
+				target = transform.forward;
+			} else {
+				target = targetDirection.normalized;
+			}
+		} else {
+			target = new Vector3 (-targetAlignment * 0.5f, 0, 1);
+		}
 
 		float angleDiff = Vector3.Angle (transform.forward, target);
 		float angleSign = Vector3.Cross (transform.forward, target).y;
@@ -68,13 +85,18 @@ public class Car : MonoBehaviour {
 
 		float steerAngle = Mathf.Clamp (angleDiff * angleSign, -maxSteerAngle, maxSteerAngle);
 
-		if (isReversing) {
-			FRWheel.steerAngle = -steerAngle;
-			FLWheel.steerAngle = -steerAngle;
-		} else {
+		Vector3 velocity = rBody.velocity;
+		Vector3 localVelocity = transform.InverseTransformDirection (velocity);
+
+		if (localVelocity.z > 0) {
 			FRWheel.steerAngle = steerAngle;
 			FLWheel.steerAngle = steerAngle;
+		} else {
+			FRWheel.steerAngle = -steerAngle;
+			FLWheel.steerAngle = -steerAngle;
 		}
+	
+		Debug.Log (FRWheel.motorTorque);
 
 		Debug.DrawLine (transform.position + transform.forward * 2, transform.position + (transform.forward * 2) + target, Color.red);
 //		Debug.Log (angleDiff * angleSign);

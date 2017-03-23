@@ -6,10 +6,29 @@ ModelImporter:
   serializedVersion: 19
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Cube
+    100004: Cylinder.004
+    100006: LTyre
+    100008: RWheel
     400000: //RootNode
+    400002: Cube
+    400004: Cylinder.004
+    400006: LTyre
+    400008: RWheel
     2300000: //RootNode
+    2300002: Cube
+    2300004: Cylinder.004
+    2300006: LTyre
+    2300008: RWheel
     3300000: //RootNode
+    3300002: Cube
+    3300004: Cylinder.004
+    3300006: LTyre
+    3300008: RWheel
     4300000: RWheel
+    4300002: LTyre
+    4300004: Cube
+    4300006: Cylinder.004
   materials:
     importMaterials: 1
     materialName: 0
