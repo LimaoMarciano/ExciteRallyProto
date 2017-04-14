@@ -65,40 +65,41 @@ public class Car : MonoBehaviour {
 		Vector3 target;
 
 		if (isAdvancedControl) {
+			FRWheel.steerAngle = targetDirection.z * maxSteerAngle;
+			FLWheel.steerAngle = targetDirection.z * maxSteerAngle;
+		} else {
 			if (targetDirection.x == 0 && targetDirection.z == 0) {
 				target = transform.forward;
 			} else {
 				target = targetDirection.normalized;
 			}
-		} else {
-			target = new Vector3 (-targetAlignment * 0.5f, 0, 1);
-		}
 
-		float angleDiff = Vector3.Angle (transform.forward, target);
-		float angleSign = Vector3.Cross (transform.forward, target).y;
+			float angleDiff = Vector3.Angle (transform.forward, target);
+			float angleSign = Vector3.Cross (transform.forward, target).y;
 
-		if (angleSign >= 0) {
-			angleSign = 1;
-		} else {
-			angleSign = -1;
-		}
+			if (angleSign >= 0) {
+				angleSign = 1;
+			} else {
+				angleSign = -1;
+			}
 
-		float steerAngle = Mathf.Clamp (angleDiff * angleSign, -maxSteerAngle, maxSteerAngle);
+			float steerAngle = Mathf.Clamp (angleDiff * angleSign, -maxSteerAngle, maxSteerAngle);
 
-		Vector3 velocity = rBody.velocity;
-		Vector3 localVelocity = transform.InverseTransformDirection (velocity);
+			Vector3 velocity = rBody.velocity;
+			Vector3 localVelocity = transform.InverseTransformDirection (velocity);
 
-		if (localVelocity.z > 0) {
-			FRWheel.steerAngle = steerAngle;
-			FLWheel.steerAngle = steerAngle;
-		} else {
-			FRWheel.steerAngle = -steerAngle;
-			FLWheel.steerAngle = -steerAngle;
+			if (localVelocity.z > 0) {
+				FRWheel.steerAngle = steerAngle;
+				FLWheel.steerAngle = steerAngle;
+			} else {
+				FRWheel.steerAngle = -steerAngle;
+				FLWheel.steerAngle = -steerAngle;
+			}
 		}
 	
-		Debug.Log (FRWheel.motorTorque);
+//		Debug.Log (FRWheel.motorTorque);
 
-		Debug.DrawLine (transform.position + transform.forward * 2, transform.position + (transform.forward * 2) + target, Color.red);
+//		Debug.DrawLine (transform.position + transform.forward * 2, transform.position + (transform.forward * 2) + target, Color.red);
 //		Debug.Log (angleDiff * angleSign);
 
 //		Debug.Log (rBody.velocity.magnitude);
