@@ -6,6 +6,9 @@ public class OrbitCamera : MonoBehaviour {
 
 	public Transform target;
 	public bool isAutoUpdated = true;
+	public bool avoidObstacleClipping = true;
+	public LayerMask cameraObstacleLayers;
+
 	public float distance = 30.0f;
 	public float smoothness = 0.2f;
 
@@ -118,6 +121,14 @@ public class OrbitCamera : MonoBehaviour {
 
 		Vector3 verticalRotationAxis = Vector3.Cross (direction, Vector3.up);
 		direction = Quaternion.AngleAxis (verticalAngle, verticalRotationAxis) * direction;
+
+		if (avoidObstacleClipping) {
+			RaycastHit hit;
+
+			if (Physics.Raycast (center, direction, out hit, distance, cameraObstacleLayers)) {
+				distance = hit.distance - 1;
+			}
+		}
 
 		return center + (direction * distance);
 	}
